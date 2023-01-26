@@ -1,10 +1,7 @@
 package com.nextgen.movieapp.ui.screen.home
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -49,7 +46,7 @@ fun HomeScreen(
                     Card(
                         shape = RoundedCornerShape(16.dp),
                         backgroundColor = MaterialTheme.colors.onPrimary,
-                        modifier = Modifier.align(Alignment.Center)
+                        modifier = Modifier.padding(16.dp).size(300.dp).align(Alignment.Center)
                     ) {
                         Text(
                             text = it.message,

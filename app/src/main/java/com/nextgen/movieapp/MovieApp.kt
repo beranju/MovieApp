@@ -14,6 +14,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.nextgen.movieapp.ui.navigation.Screen
@@ -29,9 +30,14 @@ fun MovieApp(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
 ) {
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = backStackEntry?.destination?.route
+
     Scaffold(
         topBar = {
-                 TopBar(navController)
+            if (currentRoute != Screen.DETAILMOVIE.route){
+                TopBar(navController)
+            }
         },
         modifier = modifier,
     ) {innerPadding->
@@ -59,7 +65,12 @@ fun MovieApp(
                 )
             ){
                 val id =it.arguments?.getInt("movieId") ?: 1
-                DetailScreen()
+                DetailScreen(
+                    movieId = id,
+                    navigateBack = {
+                        navController.navigateUp()
+                    }
+                )
             }
         }
     }

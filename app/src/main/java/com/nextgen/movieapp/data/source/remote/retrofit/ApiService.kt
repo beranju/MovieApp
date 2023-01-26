@@ -1,6 +1,7 @@
 package com.nextgen.movieapp.data.source.remote.retrofit
 
 import com.nextgen.movieapp.BuildConfig
+import com.nextgen.movieapp.data.source.remote.response.DetailMovieResponse
 import com.nextgen.movieapp.data.source.remote.response.MovieResponse
 import retrofit2.Response
 import retrofit2.http.GET
@@ -15,5 +16,11 @@ interface ApiService {
     suspend fun getPopularMovie (
         @Query("api_key") apiKey: String = BuildConfig.API_KEY,
     ):Response<MovieResponse>
+
+    @GET("movie/{movie_id}")
+    suspend fun getDetailMovie(
+        @Path("movie_id") movieId: Int,
+        @Query("api_key") apiKey: String = BuildConfig.API_KEY,
+    ): Response<DetailMovieResponse>
 
 }

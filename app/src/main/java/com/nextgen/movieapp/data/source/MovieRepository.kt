@@ -1,6 +1,7 @@
 package com.nextgen.movieapp.data.source
 
 import android.util.Log
+import com.nextgen.movieapp.data.source.remote.response.DetailMovieResponse
 import com.nextgen.movieapp.data.source.remote.response.ResultsItem
 import com.nextgen.movieapp.data.source.remote.retrofit.ApiService
 import com.nextgen.movieapp.domain.common.BaseResult
@@ -25,6 +26,24 @@ class MovieRepository @Inject constructor(
                     val data = response.body()
                     emit(BaseResult.Success(data!!.results))
 
+                }
+            }catch (e: Exception){
+                emit(BaseResult.Error(e.message.toString()))
+            }
+        }.flowOn(Dispatchers.IO)
+    }
+
+    override fun getDetailMovieById(id: Int): Flow<BaseResult<DetailMovieResponse>> {
+        return flow{
+            try {
+                val response = apiService.getDetailMovie(id)
+                if (response.isSuccessful){
+                    val data = response.body()
+                    if (data != null){
+                        emit(BaseResult.Success(data))
+                    }
+                }else{
+                    emit(BaseResult.Error(response.errorBody().toString()))
                 }
             }catch (e: Exception){
                 emit(BaseResult.Error(e.message.toString()))
