@@ -7,9 +7,8 @@ import com.nextgen.movieapp.domain.common.BaseResult
 import com.nextgen.movieapp.domain.model.MovieModel
 import com.nextgen.movieapp.domain.repository.IMovieRepository
 import com.nextgen.movieapp.utils.DataMapper
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -24,12 +23,13 @@ class MovieRepository @Inject constructor(
                 val response = apiService.getPopularMovie()
                 if (response.isSuccessful){
                     val data = response.body()
-                    BaseResult.Success(data)
+                    emit(BaseResult.Success(data!!.results))
+
                 }
             }catch (e: Exception){
-                BaseResult.Error(e.localizedMessage!!.toString(), null)
+                emit(BaseResult.Error(e.message.toString()))
             }
-        }
+        }.flowOn(Dispatchers.IO)
     }
 
 }

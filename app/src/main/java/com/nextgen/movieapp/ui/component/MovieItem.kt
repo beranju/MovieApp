@@ -40,7 +40,7 @@ fun MovieItem(
         Text(
             text = title,
             overflow = TextOverflow.Ellipsis,
-            maxLines = 1,
+            maxLines = 2,
             style = MaterialTheme.typography.subtitle2
         )
 
