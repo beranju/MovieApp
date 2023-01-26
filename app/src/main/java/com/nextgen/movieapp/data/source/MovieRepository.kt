@@ -5,23 +5,26 @@ import com.nextgen.movieapp.data.source.remote.retrofit.ApiService
 import com.nextgen.movieapp.domain.common.BaseResult
 import com.nextgen.movieapp.domain.model.MovieModel
 import com.nextgen.movieapp.domain.repository.IMovieRepository
+import com.nextgen.movieapp.utils.DataMapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class MovieRepository(private val apiService: ApiService) : IMovieRepository {
+@Singleton
+class MovieRepository @Inject constructor(
+    private val apiService: ApiService
+    ) : IMovieRepository {
 
-    override fun getPopularNews(): Flow<BaseResult<List<MovieModel>>> {
+    override fun getPopularMovie(): Flow<BaseResult<List<MovieModel>>> {
         return flow {
             try {
                 val response = apiService.getPopularMovie()
                 if (response.isSuccessful){
                     val data = response.body()
-                    if (data != null){
-                        data.results.forEach { data->
-
-
-                        }
-                        BaseResult.Success(data.results)
+                    data?.results?.forEach { resultItem->
+                        val dataMapper = DataMapper.resultItemToMovieModel(resultItem)
+                        BaseResult.Success(dataMapper)
                     }
                 }
             }catch (e: Exception){
