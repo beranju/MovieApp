@@ -29,6 +29,7 @@ android {
         debug{
             buildConfigField "String", "API_KEY", '"31634d4ff259e10457127397d6c94f57"'
             buildConfigField "String", "BASE_URL", '"https://api.themoviedb.org/3/"'
+            buildConfigField "String", "IMAGE_BASE_URL", '"https://image.tmdb.org/t/p/original/"'
         }
         release {
             buildConfigField "String", "API_KEY", '"31634d4ff259e10457127397d6c94f57"'

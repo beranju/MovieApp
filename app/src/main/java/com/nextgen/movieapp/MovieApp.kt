@@ -11,11 +11,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.nextgen.movieapp.ui.navigation.Screen
 import com.nextgen.movieapp.ui.screen.about.AboutScreen
+import com.nextgen.movieapp.ui.screen.detail.DetailScreen
 import com.nextgen.movieapp.ui.screen.home.HomeScreen
 import com.nextgen.movieapp.ui.screen.home.HomeViewModel
 import com.nextgen.movieapp.ui.theme.MovieAppTheme
@@ -39,11 +42,24 @@ fun MovieApp(
         ){
             composable(route = Screen.HOME.route){
                 HomeScreen(
-                    onCLickItem = {}
+                    onCLickItem = {id->
+                        navController.navigate(Screen.DETAILMOVIE.createRoute(id))
+                    }
                 )
             }
             composable(route = Screen.ABOUT.route){
                 AboutScreen()
+            }
+            composable(
+                route = Screen.DETAILMOVIE.route,
+                arguments = listOf(
+                    navArgument("movieId"){
+                        type = NavType.IntType
+                    }
+                )
+            ){
+                val id =it.arguments?.getInt("movieId") ?: 1
+                DetailScreen()
             }
         }
     }
@@ -56,7 +72,7 @@ fun TopBar(
     TopAppBar(
         title = {
             Text(
-                text = stringResource(id = R.string.app_name)
+                text = stringResource(id = R.string.app_name),
             )
         },
         actions = {
