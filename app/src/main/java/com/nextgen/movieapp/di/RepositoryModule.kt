@@ -12,10 +12,8 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class RepositoryModule {
-    @Provides
-    @Singleton
-    fun providesRepository(apiService: ApiService): IMovieRepository =
-        MovieRepository(apiService)
+abstract class RepositoryModule {
+    @Binds
+    abstract fun providesRepository(repository: MovieRepository): IMovieRepository
 
 }

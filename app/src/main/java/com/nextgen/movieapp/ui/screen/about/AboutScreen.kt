@@ -18,7 +18,7 @@ fun AboutScreen(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = stringResource(id = R.string.app_name))
+        Text(text = "About Screen")
 
     }
     

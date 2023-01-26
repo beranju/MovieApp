@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">MovieApp</string>
     <string name="popular_text">Popular Text</string>
+    <string name="iconAbout">about_page</string>
 </resources>

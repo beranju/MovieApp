@@ -12,6 +12,5 @@ import dagger.hilt.android.scopes.ViewModelScoped
 @InstallIn(ViewModelComponent::class)
 abstract class AppModule {
     @Binds
-    @ViewModelScoped
     abstract fun provideUseCase(useCaseInteractor: UseCaseInteractor): MovieUseCase
 }
