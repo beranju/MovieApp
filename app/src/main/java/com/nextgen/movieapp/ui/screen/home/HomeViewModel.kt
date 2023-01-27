@@ -44,7 +44,7 @@ class HomeViewModel @Inject constructor(private val movieUseCase: MovieUseCase):
         }
     }
 
-    fun getSearchMovie(query: String){
+    private fun getSearchMovie(query: String){
         viewModelScope.launch {
             movieUseCase.getSearchMovie(query)
                 .catch {

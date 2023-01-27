@@ -38,10 +38,10 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun DetailScreen(
+    modifier: Modifier = Modifier,
     movieId: Int,
     navigateBack: () -> Unit,
     viewModel: DetailViewModel = hiltViewModel(),
-    modifier: Modifier = Modifier,
 ) {
     Box(
         modifier = modifier.fillMaxSize(),

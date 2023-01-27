@@ -3,6 +3,8 @@ package com.nextgen.movieapp.ui.screen.home
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -17,14 +19,17 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import com.nextgen.movieapp.BuildConfig
 import com.nextgen.movieapp.R
 import com.nextgen.movieapp.data.source.remote.response.ResultsItem
 import com.nextgen.movieapp.ui.common.UiState
@@ -72,17 +77,26 @@ fun HomeScreen(
                         )
                     }
                     is UiState.Error -> {
-                        Card(
-                            shape = RoundedCornerShape(16.dp),
-                            backgroundColor = MaterialTheme.colors.onPrimary,
+                        Column(
                             modifier = Modifier
                                 .padding(16.dp)
                                 .size(300.dp)
+                                .background(MaterialTheme.colors.primary)
+                                .clip(RoundedCornerShape(16.dp)),
+                            verticalArrangement = Arrangement.Center,
                         ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_error_64) ,
+                                contentDescription = null,
+                                modifier.fillMaxWidth()
+                            )
                             Text(
                                 text = it.message,
                                 textAlign = TextAlign.Center
                             )
+                            Button(onClick = { viewModel.getPopularMovie() }) {
+                                Text(text = stringResource(id = R.string.eror_hint))
+                            }
                         }
                     }
                 }
@@ -121,7 +135,7 @@ fun HomeContent(
             ){
                 items(items = itemMovie){data->
                     MovieItem(
-                        image = "https://image.tmdb.org/t/p/original/${data.posterPath}",
+                        image = BuildConfig.IMAGE_BASE_URL + data.posterPath,
                         title = data.title,
                         modifier = Modifier.clickable {
                             onClick(data.id)
@@ -129,7 +143,6 @@ fun HomeContent(
                     )
                 }
             }
-            result()
         }else{
             if (querySearch.isNotEmpty()){
                 NoSearchResult()
@@ -144,13 +157,22 @@ fun HomeContent(
 @Composable
 fun NoSearchResult() {
     Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center
+        modifier = Modifier
+            .padding(16.dp)
+            .size(300.dp)
+            .background(MaterialTheme.colors.primary)
+            .clip(RoundedCornerShape(16.dp)),
+        verticalArrangement = Arrangement.Center,
     ) {
-        Card {
-            Text(text = "Nothing Found")
-        }
-
+        Image(
+            painter = painterResource(id = R.drawable.ic_error_64) ,
+            contentDescription = null,
+            modifier = Modifier.fillMaxWidth()
+        )
+        Text(
+            text = "Nothing Found",
+            textAlign = TextAlign.Center
+        )
     }
 }
 

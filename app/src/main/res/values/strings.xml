@@ -6,4 +6,8 @@
     <string name="bahasa_text">Bahasa</string>
     <string name="text_rilis">Rilis</string>
     <string name="hint_label">Temukan beragam movie</string>
+    <string name="eror_hint">Reload</string>
+    <string name="cd_pas_photo">pas photo</string>
+    <string name="name">Beranju Sihombing</string>
+    <string name="email">a319x0853@dicoding.org</string>
 </resources>

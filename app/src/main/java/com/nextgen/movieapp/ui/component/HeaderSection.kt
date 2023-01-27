@@ -11,9 +11,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.*
 import com.nextgen.movieapp.R
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -70,6 +68,14 @@ fun HeaderSection(
                 style = MaterialTheme.typography.subtitle1,
                 modifier = Modifier.weight(2f, true)
             )
+            Icon(
+                imageVector = Icons.Default.Favorite,
+                contentDescription = "favorite",
+                modifier = Modifier.clickable {
+                    navController.navigate(Screen.FAVORITE.route)
+                }
+            )
+            Spacer(modifier = Modifier.width(12.dp))
             Icon(
                 imageVector = Icons.Default.Person,
                 contentDescription = "about_page",
