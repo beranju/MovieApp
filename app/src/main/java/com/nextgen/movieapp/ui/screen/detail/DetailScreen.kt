@@ -1,26 +1,25 @@
 package com.nextgen.movieapp.ui.screen.detail
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import com.nextgen.movieapp.R
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
+import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.material.icons.filled.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,6 +31,7 @@ import com.nextgen.movieapp.data.source.remote.response.DetailMovieResponse
 import com.nextgen.movieapp.data.source.remote.response.ResultsItem
 import com.nextgen.movieapp.ui.common.UiState
 import com.nextgen.movieapp.ui.component.DetailMainSection
+import com.nextgen.movieapp.ui.component.HorizontalTextPil
 import com.nextgen.movieapp.ui.component.RateSection
 import com.nextgen.movieapp.ui.theme.Shapes
 import kotlinx.coroutines.launch
@@ -85,74 +85,111 @@ fun DetailContent(
 ) {
     val scope = rememberCoroutineScope()
     val scaffoldState = rememberBottomSheetScaffoldState()
-
-    Box(
-        modifier = modifier.fillMaxSize()
-    ) {
-
-        BottomSheetScaffold(
-            sheetContent = {
-                Box(
-                    Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
-                        .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
-                    contentAlignment = Alignment.Center
+    BottomSheetScaffold(
+        sheetContent = {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp)
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.KeyboardArrowUp, 
-                        contentDescription = null,
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                    Spacer(modifier = Modifier.height(20.dp))
                     RateSection(
                         voteCount = data.voteCount,
                         voteAverage = data.voteAverage,
-                        popularity = data.popularity,
+                        popularity = data.popularity
+                    )
+                    Text(
+                        text = data.title,
+                        style = MaterialTheme.typography.h4,
                     )
                 }
-                Column(
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(64.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Divider()
-                    Text(text = data.overview)
-                    Spacer(Modifier.height(20.dp))
-                    Button(
-                        onClick = {
-                            scope.launch { scaffoldState.bottomSheetState.collapse() }
-                        }
-                    ) {
-                        Text("Click to collapse sheet")
+            }
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                LazyRow(
+                    modifier = Modifier.align(Alignment.Start)
+                ){
+                    items(data.genres){genre->
+                        Text(
+                            text = genre.name,
+                            style = MaterialTheme.typography.subtitle2,
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(20.dp))
+                                .background(MaterialTheme.colors.primary)
+                                .padding(8.dp)
+                        )
+                        Spacer(modifier = Modifier.size(8.dp))
                     }
-
+                }
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(text = data.overview)
+            }
+        },
+        scaffoldState = scaffoldState,
+        sheetPeekHeight = 200.dp,
+        drawerShape = Shapes.medium,
+        drawerElevation = 16.dp,
+        floatingActionButtonPosition = FabPosition.Center,
+        floatingActionButton = {
+            FloatingActionButton(onClick = {
+                scope.launch {
+                    if (scaffoldState.bottomSheetState.isExpanded){
+                        scaffoldState.bottomSheetState.collapse()
+                    }else{
+                        scaffoldState.bottomSheetState.expand()
+                    }
                 }
             },
-            scaffoldState = scaffoldState,
-            sheetPeekHeight = 200.dp,
+               modifier = Modifier.displayCutoutPadding()
             ) {
-            Box(modifier = Modifier.padding(it)) {
-                AsyncImage(
-                    model = BuildConfig.IMAGE_BASE_URL+data.posterPath,
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxSize()
-                )
                 Icon(
-                    imageVector = Icons.Default.ArrowBack,
+                    painter = painterResource(id = if (scaffoldState.bottomSheetState.isCollapsed) R.drawable.ic_keyboard_arrow_up_24 else R.drawable.ic_keyboard_down_24),
                     contentDescription = null,
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .clickable { navigateBack() }
-                        .background(Color.LightGray, CircleShape)
                 )
             }
         }
-
+        ) {
+        Box(modifier = Modifier.padding(it)) {
+            AsyncImage(
+                model = BuildConfig.IMAGE_BASE_URL+data.posterPath,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxSize()
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                FloatingActionButton(
+                    backgroundColor = MaterialTheme.colors.onSurface,
+                    onClick = { navigateBack() }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = null,
+                        modifier = Modifier
+                    )
+                }
+                FloatingActionButton(
+                    backgroundColor = MaterialTheme.colors.surface,
+                    onClick = {  }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.FavoriteBorder,
+                        contentDescription = null,
+                        modifier = Modifier
+                    )
+                }
+            }
+        }
     }
-
-
 }
