@@ -14,4 +14,8 @@ class UseCaseInteractor @Inject constructor(private val repository: IMovieReposi
 
     override fun getDetailMovieById(id: Int): Flow<BaseResult<DetailMovieResponse>> =
         repository.getDetailMovieById(id)
+
+    override fun getSearchMovie(query: String): Flow<BaseResult<List<ResultsItem>>> {
+        return repository.getSearchMovie(query)
+    }
 }

@@ -1,57 +1,89 @@
 package com.nextgen.movieapp.ui.screen.home
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import com.nextgen.movieapp.R
 import com.nextgen.movieapp.data.source.remote.response.ResultsItem
 import com.nextgen.movieapp.ui.common.UiState
+import com.nextgen.movieapp.ui.component.HeaderSection
 import com.nextgen.movieapp.ui.component.MovieItem
+import retrofit2.http.Query
 
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
+    navController: NavHostController,
     onCLickItem: (Int) -> Unit
 ) {
+    val searchQuery = viewModel.searchText.collectAsState(initial = "")
+
     Box(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        viewModel.uiState.collectAsState(initial = UiState.Loading).value.let {
-            when(it){
-                is UiState.Loading -> {
-                        viewModel.getPopularMovie()
-                    CircularProgressIndicator(
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
-                is UiState.Success -> {
-                    HomeContent(itemMovie = it.data, onClick = onCLickItem)
-                }
-                is UiState.Error -> {
-                    Card(
-                        shape = RoundedCornerShape(16.dp),
-                        backgroundColor = MaterialTheme.colors.onPrimary,
-                        modifier = Modifier.padding(16.dp).size(300.dp).align(Alignment.Center)
-                    ) {
-                        Text(
-                            text = it.message,
-                            textAlign = TextAlign.Center
+        Column(
+            modifier = Modifier
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.Center
+        ) {
+            viewModel.uiState.collectAsState(initial = UiState.Loading).value.let {
+                when (it) {
+                    is UiState.Loading -> {
+                            viewModel.getPopularMovie()
+                        CircularProgressIndicator()
+                    }
+                    is UiState.Success -> {
+                        HomeContent(
+                            itemMovie = it.data,
+                            onClick = onCLickItem,
+                            querySearch = searchQuery.value,
+                            onSearchTextChanged = {newQuery->
+                                viewModel.onChangedSearchQuery(newQuery)
+                            },
+                            onClearClick = {
+                                viewModel.onClearClick()
+                            },
+                            navController = navController,
+                            matchFound = it.data.isNotEmpty()
                         )
+                    }
+                    is UiState.Error -> {
+                        Card(
+                            shape = RoundedCornerShape(16.dp),
+                            backgroundColor = MaterialTheme.colors.onPrimary,
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .size(300.dp)
+                        ) {
+                            Text(
+                                text = it.message,
+                                textAlign = TextAlign.Center
+                            )
+                        }
                     }
                 }
             }
@@ -62,26 +94,63 @@ fun HomeScreen(
 
 @Composable
 fun HomeContent(
-    itemMovie: List<ResultsItem>,
     modifier: Modifier = Modifier,
+    itemMovie: List<ResultsItem>,
+    querySearch: String,
+    onClearClick: () -> Unit,
+    onSearchTextChanged: (String) -> Unit = {},
+    matchFound: Boolean,
+    result: @Composable () -> Unit = {},
+    navController: NavHostController,
     onClick: (Int) -> Unit,
 ) {
-    LazyVerticalGrid(
-    columns = GridCells.Adaptive(160.dp),
-    contentPadding = PaddingValues(16.dp),
-    horizontalArrangement = Arrangement.spacedBy(16.dp),
-    verticalArrangement = Arrangement.spacedBy(16.dp),
-    modifier = modifier
-    ){
-        items(items = itemMovie){data->
-            MovieItem(
-                image = "https://image.tmdb.org/t/p/original/${data.posterPath}",
-                title = data.title,
-                modifier = Modifier.clickable {
-                    onClick(data.id)
+    Column {
+        HeaderSection(
+            querySearch = querySearch ,
+            onClearClick = onClearClick,
+            onSearchTextChanged = onSearchTextChanged,
+            navController = navController,
+        )
+        if (matchFound){
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(160.dp),
+                contentPadding = PaddingValues(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = modifier
+            ){
+                items(items = itemMovie){data->
+                    MovieItem(
+                        image = "https://image.tmdb.org/t/p/original/${data.posterPath}",
+                        title = data.title,
+                        modifier = Modifier.clickable {
+                            onClick(data.id)
+                        }
+                    )
                 }
-            )
+            }
+            result()
+        }else{
+            if (querySearch.isNotEmpty()){
+                NoSearchResult()
+            }
+
         }
+    }
+
+
+}
+
+@Composable
+fun NoSearchResult() {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center
+    ) {
+        Card {
+            Text(text = "Nothing Found")
+        }
+
     }
 }
 

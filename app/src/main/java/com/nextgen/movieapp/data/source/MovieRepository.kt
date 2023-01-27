@@ -51,4 +51,22 @@ class MovieRepository @Inject constructor(
         }.flowOn(Dispatchers.IO)
     }
 
+    override fun getSearchMovie(query: String): Flow<BaseResult<List<ResultsItem>>> {
+        return flow<BaseResult<List<ResultsItem>>> {
+            try {
+                val response = apiService.getSearchMovie(query)
+                if (response.isSuccessful){
+                    val data = response.body()
+                    if (data != null){
+                        emit(BaseResult.Success(data.results))
+                    }
+                }else{
+                    emit(BaseResult.Error(response.message()))
+                }
+            }catch (e: Exception){
+                emit(BaseResult.Error(e.message.toString()))
+            }
+        }.flowOn(Dispatchers.IO)
+    }
+
 }

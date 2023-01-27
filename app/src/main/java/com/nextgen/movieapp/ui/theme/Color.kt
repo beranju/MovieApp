@@ -2,7 +2,7 @@ package com.nextgen.movieapp.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple200 = Color(0xFFBB86FC)
-val Purple500 = Color(0xFF6200EE)
-val Purple700 = Color(0xFF3700B3)
-val Teal200 = Color(0xFF03DAC5)
+val Blue200 = Color(163, 206, 241)
+val Blue500 = Color(96, 150, 186)
+val Blue700 = Color(39, 76, 119)
+val Alice200 = Color(231, 236, 239)

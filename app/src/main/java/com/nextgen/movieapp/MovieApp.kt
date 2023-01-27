@@ -34,11 +34,11 @@ fun MovieApp(
     val currentRoute = backStackEntry?.destination?.route
 
     Scaffold(
-        topBar = {
-            if (currentRoute != Screen.DETAILMOVIE.route){
-                TopBar(navController)
-            }
-        },
+//        topBar = {
+//            if (currentRoute != Screen.DETAILMOVIE.route){
+//                TopBar(navController)
+//            }
+//        },
         modifier = modifier,
     ) {innerPadding->
         NavHost(
@@ -48,6 +48,7 @@ fun MovieApp(
         ){
             composable(route = Screen.HOME.route){
                 HomeScreen(
+                    navController = navController,
                     onCLickItem = {id->
                         navController.navigate(Screen.DETAILMOVIE.createRoute(id))
                     }

@@ -10,4 +10,6 @@ interface IMovieRepository {
     fun getPopularMovie(): Flow<BaseResult<List<ResultsItem>>>
 
     fun getDetailMovieById(id: Int): Flow<BaseResult<DetailMovieResponse>>
+
+    fun getSearchMovie(query: String): Flow<BaseResult<List<ResultsItem>>>
 }

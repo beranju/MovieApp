@@ -170,7 +170,7 @@ fun DetailContent(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 FloatingActionButton(
-                    backgroundColor = MaterialTheme.colors.onSurface,
+                    backgroundColor = MaterialTheme.colors.surface,
                     onClick = { navigateBack() }
                 ) {
                     Icon(
