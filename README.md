@@ -1,4 +1,9 @@
 # MovieApp
 
-### Compose
-### MVVM
+
+## Tech Stack
+- Compose
+- MVVM
+- Dagger-Hilt
+- CoroutineFlow
+- Retrofit
