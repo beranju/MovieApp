@@ -27,6 +27,7 @@ fun MovieItem(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
+            .fillMaxSize()
             .clip(RoundedCornerShape(8.dp))
             .background(color = MaterialTheme.colors.surface),
     ) {

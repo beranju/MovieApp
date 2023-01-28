@@ -1,43 +1,33 @@
 package com.nextgen.movieapp.ui.screen.detail
 
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import com.nextgen.movieapp.R
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.nextgen.movieapp.BuildConfig
-import com.nextgen.movieapp.data.source.remote.response.DetailMovieResponse
-import com.nextgen.movieapp.data.source.remote.response.ResultsItem
+import com.nextgen.movieapp.R
 import com.nextgen.movieapp.domain.model.DetailMovieModel
 import com.nextgen.movieapp.ui.common.UiState
-import com.nextgen.movieapp.ui.component.DetailMainSection
-import com.nextgen.movieapp.ui.component.HorizontalTextPil
 import com.nextgen.movieapp.ui.component.RateSection
 import com.nextgen.movieapp.ui.theme.Alice200
+import com.nextgen.movieapp.ui.theme.Blue200
 import com.nextgen.movieapp.ui.theme.Shapes
-import com.nextgen.movieapp.utils.DataMapper
 import kotlinx.coroutines.launch
 
 @Composable
@@ -103,51 +93,7 @@ fun DetailContent(
     val scaffoldState = rememberBottomSheetScaffoldState()
     BottomSheetScaffold(
         sheetContent = {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    RateSection(
-                        voteCount = data.voteCount,
-                        voteAverage = data.voteAverage,
-                        popularity = data.popularity
-                    )
-                    Text(
-                        text = data.title,
-                        style = MaterialTheme.typography.h4,
-                    )
-                }
-            }
-            Column(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-                    .verticalScroll(rememberScrollState()),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                LazyRow(
-                    modifier = Modifier.align(Alignment.Start)
-                ){
-                    items(data.genres!!){genre->
-                        Text(
-                            text = genre.name,
-                            style = MaterialTheme.typography.subtitle2,
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(20.dp))
-                                .background(MaterialTheme.colors.primary)
-                                .padding(8.dp)
-                        )
-                        Spacer(modifier = Modifier.size(8.dp))
-                    }
-                }
-                Spacer(modifier = Modifier.height(12.dp))
-                Text(text = data.overview)
-            }
+            SheetContent(data = data)
         },
         scaffoldState = scaffoldState,
         sheetPeekHeight = 200.dp,
@@ -172,43 +118,120 @@ fun DetailContent(
                 )
             }
         }
+        ) { innerPadding ->
+        DetailFixedContent(
+            data = data,
+            padding = innerPadding,
+            navigateBack = navigateBack,
+            onFavoriteClicked = onFavoriteClicked,
+            isFavorite = isFavorite
+        )
+    }
+}
+
+@Composable
+fun SheetContent(
+    modifier: Modifier = Modifier,
+    data: DetailMovieModel,
+
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(200.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
         ) {
-            Box(modifier = Modifier.padding(it)) {
-                AsyncImage(
-                    model = BuildConfig.IMAGE_BASE_URL+data.posterPath,
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
+            RateSection(
+                voteCount = data.voteCount,
+                voteAverage = data.voteAverage,
+                popularity = data.popularity
+            )
+            Text(
+                text = data.title,
+                style = MaterialTheme.typography.h4,
+            )
+        }
+    }
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        LazyRow(
+            modifier = Modifier.align(Alignment.Start)
+        ){
+            items(data.genres!!){genre->
+                Text(
+                    text = genre.name,
+                    style = MaterialTheme.typography.subtitle2,
                     modifier = Modifier
-                        .fillMaxSize()
+                        .clip(RoundedCornerShape(20.dp))
+                        .background(MaterialTheme.colors.primary)
+                        .padding(8.dp)
                 )
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
-                        .height(60.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    FloatingActionButton(
-                        backgroundColor = MaterialTheme.colors.surface,
-                        onClick = { navigateBack() }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = null,
-                            modifier = Modifier
-                        )
-                    }
-                    FloatingActionButton(
-                        backgroundColor = MaterialTheme.colors.surface,
-                        onClick = { onFavoriteClicked() }
-                    ) {
-                        Icon(
-                            imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                            contentDescription = null,
-                            modifier = Modifier
-                        )
-                    }
-                }
+                Spacer(modifier = Modifier.size(8.dp))
             }
+        }
+        Spacer(modifier = Modifier.height(12.dp))
+        Text(text = data.overview)
+    }
+
+}
+
+@Composable
+fun DetailFixedContent(
+    data: DetailMovieModel,
+    padding: PaddingValues,
+    navigateBack: () -> Unit,
+    onFavoriteClicked: () -> Unit,
+    isFavorite: Boolean,
+    modifier: Modifier = Modifier
+) {
+    Box(modifier = modifier.padding(paddingValues = padding)) {
+        AsyncImage(
+            model = BuildConfig.IMAGE_BASE_URL+data.posterPath,
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .fillMaxSize()
+        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .height(60.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            IconButton(onClick = {
+                    navigateBack()
+                },
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .background(Alice200)
+
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = null,
+                )
+            }
+            IconButton(
+                onClick = { onFavoriteClicked() },
+                modifier = Modifier
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(Alice200)
+            ) {
+                Icon(
+                    imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                    contentDescription = null,
+                    modifier = Modifier
+                )
+            }
+        }
     }
 }

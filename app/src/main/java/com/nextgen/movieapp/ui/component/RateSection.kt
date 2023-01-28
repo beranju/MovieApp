@@ -1,5 +1,6 @@
 package com.nextgen.movieapp.ui.component
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
@@ -18,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.nextgen.movieapp.ui.theme.MovieAppTheme
 import com.nextgen.movieapp.R
+import com.nextgen.movieapp.ui.theme.Alice200
 
 @Composable
 fun RateSection(
@@ -30,12 +32,12 @@ fun RateSection(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
-            .padding(8.dp)
+            .background(color = Alice200)
             .heightIn(min = 70.dp),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(modifier = Modifier.weight(2f)) {
+        Row(modifier = Modifier.weight(2f).padding(start = 16.dp)) {
             Icon(
                 imageVector = Icons.Filled.Star,
                 contentDescription = "vote count",
@@ -46,7 +48,7 @@ fun RateSection(
                 text = "$voteAverage ( $voteCount review)"
             )
         }
-        Row(modifier = Modifier.weight(1f)) {
+        Row(modifier = Modifier.weight(1f).padding(end = 16.dp)) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_blame_popularity),
                 contentDescription = "popularity",

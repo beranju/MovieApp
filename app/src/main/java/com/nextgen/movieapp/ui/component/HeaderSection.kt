@@ -22,6 +22,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,6 +31,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.nextgen.movieapp.ui.navigation.Screen
+import com.nextgen.movieapp.ui.theme.Alice200
 import com.nextgen.movieapp.ui.theme.MovieAppTheme
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -41,18 +43,21 @@ fun HeaderSection(
     onSearchTextChanged: (String) -> Unit = {},
     navController: NavHostController,
 ) {
-
     var showClearButton by remember {
         mutableStateOf(false)
     }
     val keyBoardController = LocalSoftwareKeyboardController.current
-
+    val focusRequester = remember {
+        FocusRequester()
+    }
+    val focusManager = LocalFocusManager.current
 
     Column (
         modifier = modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colors.primaryVariant)
-            .clip(RoundedCornerShape(bottomEnd = 16.dp, bottomStart = 16.dp)),
+            .clip(RoundedCornerShape(bottomEnd = 16.dp, bottomStart = 16.dp))
+            .background(MaterialTheme.colors.primary)
+            .padding(bottom = 16.dp),
     ){
         Row(
             modifier = Modifier
@@ -64,24 +69,28 @@ fun HeaderSection(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Welcome, Enjoy your movie",
+                text = "Welcome , Enjoy your movie",
                 style = MaterialTheme.typography.subtitle1,
+                color = MaterialTheme.colors.surface,
                 modifier = Modifier.weight(2f, true)
             )
             Icon(
                 imageVector = Icons.Default.Favorite,
                 contentDescription = "favorite",
-                modifier = Modifier.clickable {
-                    navController.navigate(Screen.FAVORITE.route)
-                }
+                modifier = Modifier
+                    .clickable {
+                    navController.navigate(Screen.FAVORITE.route) },
+                tint = MaterialTheme.colors.surface
+
             )
-            Spacer(modifier = Modifier.width(12.dp))
+            Spacer(modifier = Modifier.width(20.dp))
             Icon(
                 imageVector = Icons.Default.Person,
                 contentDescription = "about_page",
-                modifier = Modifier.clickable {
-                    navController.navigate(Screen.ABOUT.route)
-                }
+                modifier = Modifier
+                    .clickable {
+                        navController.navigate(Screen.ABOUT.route) },
+                tint = MaterialTheme.colors.surface
             )
         }
         Spacer(modifier = Modifier.height(20.dp))
@@ -107,7 +116,10 @@ fun HeaderSection(
                     enter = fadeIn(),
                     exit = fadeOut(),
                 ) {
-                    IconButton(onClick = { onClearClick() }) {
+                    IconButton(onClick = {
+                        onClearClick()
+                        focusManager.clearFocus()
+                    }) {
                         Icon(
                             imageVector = Icons.Default.Close ,
                             contentDescription = null)
@@ -118,12 +130,17 @@ fun HeaderSection(
             shape = RoundedCornerShape(16.dp),
             singleLine = true,
             maxLines = 1,
-            keyboardActions = KeyboardActions(onDone = {
-                keyBoardController?.hide()
-            }),
+            keyboardActions =
+                KeyboardActions(
+                    onDone = {
+                        keyBoardController?.hide()
+                    }
+                )
+            ,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 16.dp)
+                .focusRequester(focusRequester)
                 .onFocusChanged { focusState ->
                     showClearButton = focusState.isFocused
                 }
@@ -135,9 +152,8 @@ fun HeaderSection(
 @Composable
 fun HeaderSectionPreview() {
     MovieAppTheme {
-        HeaderSection(querySearch = "", onClearClick = {}, onSearchTextChanged = {}, navController = rememberNavController(
-
-        ))
+        HeaderSection(querySearch = "", onClearClick = {}, onSearchTextChanged = {}, navController = rememberNavController()
+        )
     }
 
 }

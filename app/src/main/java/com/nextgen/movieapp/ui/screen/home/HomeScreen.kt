@@ -25,10 +25,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.nextgen.movieapp.BuildConfig
 import com.nextgen.movieapp.R
 import com.nextgen.movieapp.data.source.remote.response.ResultsItem
@@ -38,6 +40,7 @@ import com.nextgen.movieapp.ui.component.HeaderSection
 import com.nextgen.movieapp.ui.component.LoadingView
 import com.nextgen.movieapp.ui.component.MovieItem
 import com.nextgen.movieapp.ui.component.NothingFound
+import com.nextgen.movieapp.ui.theme.MovieAppTheme
 import retrofit2.http.Query
 
 @Composable
@@ -48,9 +51,6 @@ fun HomeScreen(
     onCLickItem: (Int) -> Unit
 ) {
     val searchQuery = viewModel.searchText.collectAsState(initial = "")
-    var loading by remember {
-        mutableStateOf(false)
-    }
 
     Box(
         modifier = modifier.fillMaxSize(),
@@ -59,29 +59,29 @@ fun HomeScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize(),
-            verticalArrangement = Arrangement.Top
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            HeaderSection(
+                querySearch = searchQuery.value ,
+                onClearClick = { viewModel.onClearClick() },
+                onSearchTextChanged = { newQuery ->
+                    viewModel.onChangedSearchQuery(newQuery)
+                },
+                navController = navController,
+            )
             viewModel.uiState.collectAsState(initial = UiState.Loading).value.let {
                 when (it) {
                     is UiState.Loading -> {
                         viewModel.getPopularMovie()
-                        loading = true
+                        LoadingView()
                     }
                     is UiState.Success -> {
-                        loading = false
                         HomeContent(
+                            querySearch = searchQuery.value,
                             itemMovie = it.data,
                             onClick = onCLickItem,
-                            querySearch = searchQuery.value,
-                            onSearchTextChanged = {newQuery->
-                                viewModel.onChangedSearchQuery(newQuery)
-                            },
-                            onClearClick = {
-                                viewModel.onClearClick()
-                            },
-                            navController = navController,
                             matchFound = it.data.isNotEmpty(),
-                            loading = loading
                         )
                     }
                     is UiState.Error -> {
@@ -119,45 +119,40 @@ fun HomeContent(
     modifier: Modifier = Modifier,
     itemMovie: List<MovieModel>,
     querySearch: String,
-    onClearClick: () -> Unit,
-    onSearchTextChanged: (String) -> Unit = {},
     matchFound: Boolean,
-    loading: Boolean,
-    result: @Composable () -> Unit = {},
-    navController: NavHostController,
     onClick: (Int) -> Unit,
 ) {
-    Column {
-        HeaderSection(
-            querySearch = querySearch ,
-            onClearClick = onClearClick,
-            onSearchTextChanged = onSearchTextChanged,
-            navController = navController,
-        )
-        LoadingView(isLoading = loading)
-        if (matchFound){
-            LazyVerticalGrid(
-                columns = GridCells.Adaptive(160.dp),
-                contentPadding = PaddingValues(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = modifier
-            ){
-                items(items = itemMovie){data->
-                    MovieItem(
-                        image = BuildConfig.IMAGE_BASE_URL + data.posterPath,
-                        title = data.title,
-                        modifier = Modifier.clickable {
-                            onClick(data.id)
-                        }
-                    )
+    Column(
+        modifier = modifier
+            .fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+            if (matchFound){
+                LazyVerticalGrid(
+                    columns = GridCells.Adaptive(160.dp),
+                    contentPadding = PaddingValues(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = modifier
+                ){
+                    items(items = itemMovie){data->
+                        MovieItem(
+                            image = BuildConfig.IMAGE_BASE_URL + data.posterPath,
+                            title = data.title,
+                            modifier = Modifier.clickable {
+                                onClick(data.id)
+                            }
+                        )
+                    }
                 }
+            }else{
+                if (querySearch.isNotEmpty()){
+                    NothingFound()
+                }
+
             }
-        }else{
-            if (querySearch.isNotEmpty()){
-                NothingFound()
-            }
-        }
+
+
     }
 }
 
