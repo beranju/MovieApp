@@ -19,4 +19,6 @@ interface IMovieRepository {
     fun isFavoriteMovie(movieId: Int): Flow<BaseResult<Boolean>>
 
     suspend fun insertFavoriteMovie(movie: DetailMovieModel)
+
+    suspend fun deleteMovie(movie: DetailMovieModel)
 }

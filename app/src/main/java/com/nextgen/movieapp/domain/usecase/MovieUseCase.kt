@@ -20,4 +20,6 @@ interface MovieUseCase {
     fun isFavoriteMovie(movieId: Int): Flow<BaseResult<Boolean>>
 
     suspend fun insertFavoriteMovie(movieModel: DetailMovieModel)
+
+    suspend fun deleteMovie(movieModel: DetailMovieModel)
 }

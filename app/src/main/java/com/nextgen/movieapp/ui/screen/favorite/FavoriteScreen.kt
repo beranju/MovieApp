@@ -2,6 +2,7 @@ package com.nextgen.movieapp.ui.screen.favorite
 
 import android.support.v4.os.IResultReceiver.Default
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -36,6 +37,7 @@ import com.nextgen.movieapp.ui.theme.Shapes
 fun FavoriteScreen(
     modifier: Modifier = Modifier,
     navigateBack: () -> Unit,
+    onClickItem: (Int) -> Unit,
     viewModel: FavoriteViewModel = hiltViewModel()
 ) {
     Column(
@@ -57,7 +59,7 @@ fun FavoriteScreen(
                 is UiState.Success -> {
                     FavoriteContent(
                         listMovie =result.data ,
-                        onClickItem = {},
+                        onClickItem = onClickItem,
                     )
                 }
                 is UiState.Error -> {
@@ -72,7 +74,7 @@ fun FavoriteScreen(
 fun FavoriteContent(
     modifier: Modifier = Modifier,
     listMovie: List<DetailMovieModel>,
-    onClickItem: () -> Unit,
+    onClickItem: (Int) -> Unit,
 ) {
     LazyColumn(
         modifier = modifier
@@ -83,7 +85,9 @@ fun FavoriteContent(
             FavoriteItem(
                 title = data.title,
                 overview = data.overview,
-                posterPath = data.posterPath.toString()
+                posterPath = data.posterPath.toString(),
+                modifier = Modifier
+                    .clickable { onClickItem(data.id) }
             )
             Spacer(modifier = Modifier.height(8.dp))
         }

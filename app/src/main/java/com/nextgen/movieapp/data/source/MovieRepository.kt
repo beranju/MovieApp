@@ -93,6 +93,11 @@ class MovieRepository @Inject constructor(
         }
     }
 
+    override suspend fun deleteMovie(movie: DetailMovieModel) {
+        DataMapper.detailMovieModelToMovieEntity(movie).let {
+            movieDao.delete(it)
+        }
+    }
 
 
 }

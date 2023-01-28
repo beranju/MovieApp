@@ -66,6 +66,9 @@ fun MovieApp(
                 FavoriteScreen(
                     navigateBack = {
                         navController.navigateUp()
+                    },
+                    onClickItem = {id ->
+                        navController.navigate(Screen.DETAILMOVIE.createRoute(id))
                     }
                 )
             }
@@ -80,9 +83,7 @@ fun MovieApp(
                 val id =it.arguments?.getInt("movieId") ?: 1
                 DetailScreen(
                     movieId = id,
-                    navigateBack = {
-                        navController.navigateUp()
-                    }
+                    navController = navController
                 )
             }
         }

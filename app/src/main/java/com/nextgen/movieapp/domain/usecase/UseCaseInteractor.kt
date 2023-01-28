@@ -29,4 +29,8 @@ class UseCaseInteractor @Inject constructor(private val repository: IMovieReposi
 
     override suspend fun insertFavoriteMovie(movieModel: DetailMovieModel) =
         repository.insertFavoriteMovie(movieModel)
+
+    override suspend fun deleteMovie(movieModel: DetailMovieModel) {
+        return repository.deleteMovie(movieModel)
+    }
 }

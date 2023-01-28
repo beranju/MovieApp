@@ -13,12 +13,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.nextgen.movieapp.BuildConfig
 import com.nextgen.movieapp.R
@@ -26,8 +25,8 @@ import com.nextgen.movieapp.domain.model.DetailMovieModel
 import com.nextgen.movieapp.ui.common.UiState
 import com.nextgen.movieapp.ui.component.ErrorView
 import com.nextgen.movieapp.ui.component.RateSection
+import com.nextgen.movieapp.ui.navigation.Screen
 import com.nextgen.movieapp.ui.theme.Alice200
-import com.nextgen.movieapp.ui.theme.Blue200
 import com.nextgen.movieapp.ui.theme.Shapes
 import kotlinx.coroutines.launch
 
@@ -35,45 +34,67 @@ import kotlinx.coroutines.launch
 fun DetailScreen(
     modifier: Modifier = Modifier,
     movieId: Int,
-    navigateBack: () -> Unit,
+    navController: NavHostController,
     viewModel: DetailViewModel = hiltViewModel(),
 ) {
     val isFavorite = viewModel.isFavorite.collectAsState(initial = false).value
-    Box(
-        modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ){
-        viewModel.state.collectAsState(initial = UiState.Loading).value.let { uiState->
-            when(uiState){
-                is UiState.Loading -> {
-                    viewModel.getDetailMovieById(movieId)
-                    viewModel.isFavoriteMovie(movieId)
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                }
-                is UiState.Success -> {
-                    DetailContent(
-                        data = uiState.data,
-                        navigateBack = navigateBack,
-                        onFavoriteClicked = {
-                            viewModel.insertFavoriteMovie(uiState.data)
-                            viewModel.isFavoriteMovie(movieId)
-                        },
-                        isFavorite = isFavorite
-                    )
-                }
-                is UiState.Error -> {
-                   ErrorView(message = uiState.message, action = {})
+    val scope = rememberCoroutineScope()
+    val scaffoldState = rememberScaffoldState()
+    Scaffold(
+        scaffoldState = scaffoldState
+    ) {
+        Box(
+            modifier = modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ){
+            viewModel.state.collectAsState(initial = UiState.Loading).value.let { uiState->
+                when(uiState){
+                    is UiState.Loading -> {
+                        viewModel.getDetailMovieById(movieId)
+                        viewModel.isFavoriteMovie(movieId)
+                        CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                    }
+                    is UiState.Success -> {
+                        DetailContent(
+                            data = uiState.data,
+                            navController = navController,
+                            onFavoriteClicked = {
+                                uiState.data.let {
+                                    if (isFavorite){
+                                        viewModel.delete(it)
+                                    }else{
+                                        viewModel.insertFavoriteMovie(it)
+                                    }
+                                }
+                                scope.launch{
+                                    val result = scaffoldState.snackbarHostState.showSnackbar(
+                                        message = if (isFavorite) "Movie berhasil dihapus" else "Movie berhasil ditambahkan",
+                                        actionLabel = "Lihat",
+                                        duration = SnackbarDuration.Short
+                                    )
+                                    if(result == SnackbarResult.ActionPerformed){
+                                        navController.navigate(Screen.FAVORITE.route)
+                                    }
+                                }
+                            },
+                            isFavorite = isFavorite
+                        )
+                    }
+                    is UiState.Error -> {
+                        ErrorView(message = uiState.message, action = {})
+                    }
                 }
             }
         }
     }
+
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun DetailContent(
     data: DetailMovieModel,
-    navigateBack: () -> Unit,
+    navController: NavHostController,
     onFavoriteClicked: () -> Unit,
     isFavorite: Boolean,
     modifier: Modifier = Modifier,
@@ -111,7 +132,7 @@ fun DetailContent(
         DetailFixedContent(
             data = data,
             padding = innerPadding,
-            navigateBack = navigateBack,
+            navController = navController,
             onFavoriteClicked = onFavoriteClicked,
             isFavorite = isFavorite
         )
@@ -176,7 +197,7 @@ fun SheetContent(
 fun DetailFixedContent(
     data: DetailMovieModel,
     padding: PaddingValues,
-    navigateBack: () -> Unit,
+    navController: NavHostController,
     onFavoriteClicked: () -> Unit,
     isFavorite: Boolean,
     modifier: Modifier = Modifier
@@ -197,7 +218,7 @@ fun DetailFixedContent(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             IconButton(onClick = {
-                    navigateBack()
+                    navController.navigateUp()
                 },
                 modifier = Modifier
                     .clip(CircleShape)

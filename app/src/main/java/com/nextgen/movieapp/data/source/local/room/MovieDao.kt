@@ -14,12 +14,12 @@ interface MovieDao {
     fun getAllNews(): Flow<List<MovieEntity>>
 
     @Query("SELECT EXISTS(SELECT * FROM movie WHERE id = :id)")
-    fun isFavoriteMovie(id: Int): Boolean
+    suspend fun isFavoriteMovie(id: Int): Boolean
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMovie(movie: MovieEntity)
 
     @Delete
-    fun delete(movie: MovieEntity)
+    suspend fun delete(movie: MovieEntity)
 
 }

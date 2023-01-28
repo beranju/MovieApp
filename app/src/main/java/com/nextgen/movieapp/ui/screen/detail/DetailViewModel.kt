@@ -53,9 +53,17 @@ class DetailViewModel @Inject constructor(private val movieUseCase: MovieUseCase
         }
     }
 
+    fun delete(movie: DetailMovieModel){
+        viewModelScope.launch {
+            movieUseCase.deleteMovie(movie)
+            isFavoriteMovie(movie.id)
+        }
+    }
+
     fun insertFavoriteMovie(movieModel: DetailMovieModel){
         viewModelScope.launch {
             movieUseCase.insertFavoriteMovie(movieModel)
+            isFavoriteMovie(movieModel.id)
         }
     }
 }
