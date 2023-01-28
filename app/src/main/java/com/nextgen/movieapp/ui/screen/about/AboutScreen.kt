@@ -21,6 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.nextgen.movieapp.R
+import com.nextgen.movieapp.ui.component.ActionBarTemplate
 import com.nextgen.movieapp.ui.theme.MovieAppTheme
 
 @Composable
@@ -28,17 +29,7 @@ fun AboutScreen(
     modifier: Modifier = Modifier,
     navigateBack: () -> Unit,
 ) {
-    Box(
-        modifier = modifier
-    ){
-        Icon(
-            imageVector = Icons.Default.ArrowBack,
-            contentDescription = null,
-            modifier = Modifier.padding(16.dp).clickable {
-                navigateBack()
-            }
-        )
-    }
+    ActionBarTemplate(navigateBack = { navigateBack() }, title = "About Me")
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,

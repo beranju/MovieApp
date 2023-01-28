@@ -36,10 +36,7 @@ import com.nextgen.movieapp.R
 import com.nextgen.movieapp.data.source.remote.response.ResultsItem
 import com.nextgen.movieapp.domain.model.MovieModel
 import com.nextgen.movieapp.ui.common.UiState
-import com.nextgen.movieapp.ui.component.HeaderSection
-import com.nextgen.movieapp.ui.component.LoadingView
-import com.nextgen.movieapp.ui.component.MovieItem
-import com.nextgen.movieapp.ui.component.NothingFound
+import com.nextgen.movieapp.ui.component.*
 import com.nextgen.movieapp.ui.theme.MovieAppTheme
 import retrofit2.http.Query
 
@@ -85,27 +82,7 @@ fun HomeScreen(
                         )
                     }
                     is UiState.Error -> {
-                        Column(
-                            modifier = Modifier
-                                .padding(16.dp)
-                                .size(300.dp)
-                                .background(MaterialTheme.colors.primary)
-                                .clip(RoundedCornerShape(16.dp)),
-                            verticalArrangement = Arrangement.Center,
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.ic_error_64) ,
-                                contentDescription = null,
-                                modifier.fillMaxWidth()
-                            )
-                            Text(
-                                text = it.message,
-                                textAlign = TextAlign.Center
-                            )
-                            Button(onClick = { viewModel.getPopularMovie() }) {
-                                Text(text = stringResource(id = R.string.eror_hint))
-                            }
-                        }
+                        ErrorView(message = it.message, action = {})
                     }
                 }
             }

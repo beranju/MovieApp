@@ -24,6 +24,7 @@ import com.nextgen.movieapp.BuildConfig
 import com.nextgen.movieapp.R
 import com.nextgen.movieapp.domain.model.DetailMovieModel
 import com.nextgen.movieapp.ui.common.UiState
+import com.nextgen.movieapp.ui.component.ErrorView
 import com.nextgen.movieapp.ui.component.RateSection
 import com.nextgen.movieapp.ui.theme.Alice200
 import com.nextgen.movieapp.ui.theme.Blue200
@@ -61,19 +62,7 @@ fun DetailScreen(
                     )
                 }
                 is UiState.Error -> {
-                    Card(
-                        shape = RoundedCornerShape(16.dp),
-                        backgroundColor = MaterialTheme.colors.onPrimary,
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .size(300.dp)
-                            .align(Alignment.Center)
-                    ) {
-                        Text(
-                            text = uiState.message,
-                            textAlign = TextAlign.Center
-                        )
-                    }
+                   ErrorView(message = uiState.message, action = {})
                 }
             }
         }
