@@ -20,6 +20,7 @@ import androidx.navigation.navArgument
 import com.nextgen.movieapp.ui.navigation.Screen
 import com.nextgen.movieapp.ui.screen.about.AboutScreen
 import com.nextgen.movieapp.ui.screen.detail.DetailScreen
+import com.nextgen.movieapp.ui.screen.favorite.FavoriteScreen
 import com.nextgen.movieapp.ui.screen.home.HomeScreen
 import com.nextgen.movieapp.ui.screen.home.HomeViewModel
 import com.nextgen.movieapp.ui.theme.MovieAppTheme
@@ -56,6 +57,13 @@ fun MovieApp(
             }
             composable(route = Screen.ABOUT.route){
                 AboutScreen(
+                    navigateBack = {
+                        navController.navigateUp()
+                    }
+                )
+            }
+            composable(route = Screen.FAVORITE.route){
+                FavoriteScreen(
                     navigateBack = {
                         navController.navigateUp()
                     }

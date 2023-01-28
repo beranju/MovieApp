@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nextgen.movieapp.data.source.remote.response.ResultsItem
 import com.nextgen.movieapp.domain.common.BaseResult
+import com.nextgen.movieapp.domain.model.MovieModel
 import com.nextgen.movieapp.domain.usecase.MovieUseCase
 import com.nextgen.movieapp.ui.common.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,8 +17,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(private val movieUseCase: MovieUseCase): ViewModel() {
-    private var _uiState: MutableStateFlow<UiState<List<ResultsItem>>> = MutableStateFlow(UiState.Loading)
-    val uiState:StateFlow<UiState<List<ResultsItem>>> get() = _uiState
+    private var _uiState: MutableStateFlow<UiState<List<MovieModel>>> = MutableStateFlow(UiState.Loading)
+    val uiState:StateFlow<UiState<List<MovieModel>>> get() = _uiState
 
     private var _searchText: MutableStateFlow<String> = MutableStateFlow("")
     val searchText: StateFlow<String> get() = _searchText

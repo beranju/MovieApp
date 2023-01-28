@@ -1,5 +1,6 @@
 package com.nextgen.movieapp.ui.screen.detail
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -29,11 +30,14 @@ import coil.compose.AsyncImage
 import com.nextgen.movieapp.BuildConfig
 import com.nextgen.movieapp.data.source.remote.response.DetailMovieResponse
 import com.nextgen.movieapp.data.source.remote.response.ResultsItem
+import com.nextgen.movieapp.domain.model.DetailMovieModel
 import com.nextgen.movieapp.ui.common.UiState
 import com.nextgen.movieapp.ui.component.DetailMainSection
 import com.nextgen.movieapp.ui.component.HorizontalTextPil
 import com.nextgen.movieapp.ui.component.RateSection
+import com.nextgen.movieapp.ui.theme.Alice200
 import com.nextgen.movieapp.ui.theme.Shapes
+import com.nextgen.movieapp.utils.DataMapper
 import kotlinx.coroutines.launch
 
 @Composable
@@ -43,6 +47,7 @@ fun DetailScreen(
     navigateBack: () -> Unit,
     viewModel: DetailViewModel = hiltViewModel(),
 ) {
+    val isFavorite = viewModel.isFavorite.collectAsState(initial = false).value
     Box(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -51,10 +56,19 @@ fun DetailScreen(
             when(uiState){
                 is UiState.Loading -> {
                     viewModel.getDetailMovieById(movieId)
+                    viewModel.isFavoriteMovie(movieId)
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 }
                 is UiState.Success -> {
-                    DetailContent(data = uiState.data, navigateBack = navigateBack)
+                    DetailContent(
+                        data = uiState.data,
+                        navigateBack = navigateBack,
+                        onFavoriteClicked = {
+                            viewModel.insertFavoriteMovie(uiState.data)
+                            viewModel.isFavoriteMovie(movieId)
+                        },
+                        isFavorite = isFavorite
+                    )
                 }
                 is UiState.Error -> {
                     Card(
@@ -79,8 +93,10 @@ fun DetailScreen(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun DetailContent(
-    data: DetailMovieResponse,
+    data: DetailMovieModel,
     navigateBack: () -> Unit,
+    onFavoriteClicked: () -> Unit,
+    isFavorite: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val scope = rememberCoroutineScope()
@@ -117,7 +133,7 @@ fun DetailContent(
                 LazyRow(
                     modifier = Modifier.align(Alignment.Start)
                 ){
-                    items(data.genres){genre->
+                    items(data.genres!!){genre->
                         Text(
                             text = genre.name,
                             style = MaterialTheme.typography.subtitle2,
@@ -157,39 +173,42 @@ fun DetailContent(
             }
         }
         ) {
-        Box(modifier = Modifier.padding(it)) {
-            AsyncImage(
-                model = BuildConfig.IMAGE_BASE_URL+data.posterPath,
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxSize()
-            )
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                FloatingActionButton(
-                    backgroundColor = MaterialTheme.colors.surface,
-                    onClick = { navigateBack() }
+            Box(modifier = Modifier.padding(it)) {
+                AsyncImage(
+                    model = BuildConfig.IMAGE_BASE_URL+data.posterPath,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxSize()
+                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .height(60.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = null,
-                        modifier = Modifier
-                    )
-                }
-                FloatingActionButton(
-                    backgroundColor = MaterialTheme.colors.surface,
-                    onClick = {  }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.FavoriteBorder,
-                        contentDescription = null,
-                        modifier = Modifier
-                    )
+                    FloatingActionButton(
+                        backgroundColor = MaterialTheme.colors.surface,
+                        onClick = { navigateBack() }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = null,
+                            modifier = Modifier
+                        )
+                    }
+                    FloatingActionButton(
+                        backgroundColor = MaterialTheme.colors.surface,
+                        onClick = { onFavoriteClicked() }
+                    ) {
+                        Icon(
+                            imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                            contentDescription = null,
+                            modifier = Modifier
+                        )
+                    }
                 }
             }
-        }
     }
 }

@@ -32,9 +32,12 @@ import androidx.navigation.NavHostController
 import com.nextgen.movieapp.BuildConfig
 import com.nextgen.movieapp.R
 import com.nextgen.movieapp.data.source.remote.response.ResultsItem
+import com.nextgen.movieapp.domain.model.MovieModel
 import com.nextgen.movieapp.ui.common.UiState
 import com.nextgen.movieapp.ui.component.HeaderSection
+import com.nextgen.movieapp.ui.component.LoadingView
 import com.nextgen.movieapp.ui.component.MovieItem
+import com.nextgen.movieapp.ui.component.NothingFound
 import retrofit2.http.Query
 
 @Composable
@@ -45,6 +48,9 @@ fun HomeScreen(
     onCLickItem: (Int) -> Unit
 ) {
     val searchQuery = viewModel.searchText.collectAsState(initial = "")
+    var loading by remember {
+        mutableStateOf(false)
+    }
 
     Box(
         modifier = modifier.fillMaxSize(),
@@ -53,15 +59,16 @@ fun HomeScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize(),
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Top
         ) {
             viewModel.uiState.collectAsState(initial = UiState.Loading).value.let {
                 when (it) {
                     is UiState.Loading -> {
-                            viewModel.getPopularMovie()
-                        CircularProgressIndicator()
+                        viewModel.getPopularMovie()
+                        loading = true
                     }
                     is UiState.Success -> {
+                        loading = false
                         HomeContent(
                             itemMovie = it.data,
                             onClick = onCLickItem,
@@ -73,7 +80,8 @@ fun HomeScreen(
                                 viewModel.onClearClick()
                             },
                             navController = navController,
-                            matchFound = it.data.isNotEmpty()
+                            matchFound = it.data.isNotEmpty(),
+                            loading = loading
                         )
                     }
                     is UiState.Error -> {
@@ -109,11 +117,12 @@ fun HomeScreen(
 @Composable
 fun HomeContent(
     modifier: Modifier = Modifier,
-    itemMovie: List<ResultsItem>,
+    itemMovie: List<MovieModel>,
     querySearch: String,
     onClearClick: () -> Unit,
     onSearchTextChanged: (String) -> Unit = {},
     matchFound: Boolean,
+    loading: Boolean,
     result: @Composable () -> Unit = {},
     navController: NavHostController,
     onClick: (Int) -> Unit,
@@ -125,6 +134,7 @@ fun HomeContent(
             onSearchTextChanged = onSearchTextChanged,
             navController = navController,
         )
+        LoadingView(isLoading = loading)
         if (matchFound){
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(160.dp),
@@ -145,34 +155,11 @@ fun HomeContent(
             }
         }else{
             if (querySearch.isNotEmpty()){
-                NoSearchResult()
+                NothingFound()
             }
-
         }
     }
-
-
 }
 
-@Composable
-fun NoSearchResult() {
-    Column(
-        modifier = Modifier
-            .padding(16.dp)
-            .size(300.dp)
-            .background(MaterialTheme.colors.primary)
-            .clip(RoundedCornerShape(16.dp)),
-        verticalArrangement = Arrangement.Center,
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_error_64) ,
-            contentDescription = null,
-            modifier = Modifier.fillMaxWidth()
-        )
-        Text(
-            text = "Nothing Found",
-            textAlign = TextAlign.Center
-        )
-    }
-}
+
 

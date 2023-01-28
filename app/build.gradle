@@ -95,6 +95,12 @@ dependencies {
     implementation "io.insert-koin:koin-androidx-compose:$koin_android_compose_version"
     implementation "io.insert-koin:koin-androidx-compose:$koin_version"
 
+    //room
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+    androidTestImplementation "androidx.room:room-testing:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
+
 }
 
 //// Allow references to generated code

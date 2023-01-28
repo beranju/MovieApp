@@ -8,7 +8,6 @@ data class MovieModel(
     val originalTitle: String,
     val video: Boolean,
     val title: String,
-    val genreIds: List<Int>,
     val posterPath: String,
     val backdropPath: String,
     val releaseDate: String,
