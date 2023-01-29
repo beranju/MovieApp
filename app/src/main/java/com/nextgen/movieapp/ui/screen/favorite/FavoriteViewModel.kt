@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nextgen.movieapp.domain.common.BaseResult
 import com.nextgen.movieapp.domain.model.DetailMovieModel
-import com.nextgen.movieapp.domain.model.MovieModel
 import com.nextgen.movieapp.domain.usecase.MovieUseCase
 import com.nextgen.movieapp.ui.common.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel

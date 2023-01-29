@@ -1,7 +1,5 @@
 package com.nextgen.movieapp.domain.repository
 
-import com.nextgen.movieapp.data.source.remote.response.DetailMovieResponse
-import com.nextgen.movieapp.data.source.remote.response.ResultsItem
 import com.nextgen.movieapp.domain.common.BaseResult
 import com.nextgen.movieapp.domain.model.DetailMovieModel
 import com.nextgen.movieapp.domain.model.MovieModel
@@ -14,7 +12,7 @@ interface IMovieRepository {
 
     fun getSearchMovie(query: String): Flow<BaseResult<List<MovieModel>>>
 
-    fun getFavoritedNews(): Flow<BaseResult<List<DetailMovieModel>>>
+    fun getFavoriteNews(): Flow<BaseResult<List<DetailMovieModel>>>
 
     fun isFavoriteMovie(movieId: Int): Flow<BaseResult<Boolean>>
 

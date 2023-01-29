@@ -2,7 +2,6 @@ package com.nextgen.movieapp.ui.screen.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.nextgen.movieapp.data.source.remote.response.ResultsItem
 import com.nextgen.movieapp.domain.common.BaseResult
 import com.nextgen.movieapp.domain.model.MovieModel
 import com.nextgen.movieapp.domain.usecase.MovieUseCase
@@ -11,7 +10,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -76,7 +74,5 @@ class HomeViewModel @Inject constructor(private val movieUseCase: MovieUseCase):
         _searchText.value = ""
         getPopularMovie()
     }
-
-
 
 }

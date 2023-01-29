@@ -7,7 +7,6 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -17,9 +16,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.nextgen.movieapp.ui.theme.MovieAppTheme
 import com.nextgen.movieapp.R
 import com.nextgen.movieapp.ui.theme.Alice200
+import com.nextgen.movieapp.ui.theme.MovieAppTheme
 
 @Composable
 fun RateSection(
@@ -63,7 +62,6 @@ fun RateSection(
 }
 
 
-
 @Preview(showBackground = true)
 @Composable
 fun RateSectionPrev() {
@@ -73,5 +71,4 @@ fun RateSectionPrev() {
             voteAverage = 5.5,
             popularity = 20.7558)
     }
-
 }

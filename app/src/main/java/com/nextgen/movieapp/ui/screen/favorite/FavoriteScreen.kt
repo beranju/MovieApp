@@ -1,13 +1,10 @@
 package com.nextgen.movieapp.ui.screen.favorite
 
-import android.support.v4.os.IResultReceiver.Default
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -16,19 +13,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.nextgen.movieapp.BuildConfig
-import com.nextgen.movieapp.data.source.remote.response.ResultsItem
+import com.nextgen.movieapp.R
 import com.nextgen.movieapp.domain.model.DetailMovieModel
 import com.nextgen.movieapp.ui.common.UiState
 import com.nextgen.movieapp.ui.component.ActionBarTemplate
 import com.nextgen.movieapp.ui.component.ErrorView
 import com.nextgen.movieapp.ui.component.LoadingView
-import com.nextgen.movieapp.ui.component.NothingFound
 import com.nextgen.movieapp.ui.theme.Alice200
 import com.nextgen.movieapp.ui.theme.MovieAppTheme
 import com.nextgen.movieapp.ui.theme.Shapes
@@ -45,10 +42,9 @@ fun FavoriteScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
-
         ActionBarTemplate(
             navigateBack = { navigateBack() },
-            title = "Your Favorite Movie"
+            title = stringResource(R.string.favorite_screen_title)
         )
         viewModel.state.collectAsState(initial = UiState.Loading).value.let { result ->
             when(result){
@@ -91,9 +87,7 @@ fun FavoriteContent(
             )
             Spacer(modifier = Modifier.height(8.dp))
         }
-
     }
-
 }
 
 @Composable
@@ -127,7 +121,7 @@ fun FavoriteItem(
         ) {
             Text(
                 text = title,
-                style = MaterialTheme.typography.h5,
+                style = MaterialTheme.typography.h6,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
             )
@@ -137,9 +131,7 @@ fun FavoriteItem(
                 maxLines = 3,
             )
         }
-
     }
-
 }
 
 @Preview(showBackground = true)
@@ -148,5 +140,4 @@ fun Default() {
     MovieAppTheme {
         FavoriteItem(title = "dfkljgjdfk", overview = "lkfgjajfgfdg", posterPath = "")
     }
-
 }

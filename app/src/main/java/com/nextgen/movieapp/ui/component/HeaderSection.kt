@@ -43,13 +43,9 @@ fun HeaderSection(
     onSearchTextChanged: (String) -> Unit = {},
     navController: NavHostController,
 ) {
-    var showClearButton by remember {
-        mutableStateOf(false)
-    }
+    var showClearButton by remember { mutableStateOf(false) }
     val keyBoardController = LocalSoftwareKeyboardController.current
-    val focusRequester = remember {
-        FocusRequester()
-    }
+    val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
 
     Column (
@@ -69,8 +65,8 @@ fun HeaderSection(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Welcome , Enjoy your movie",
-                style = MaterialTheme.typography.subtitle1,
+                text = stringResource(R.string.welcome_text),
+                style = MaterialTheme.typography.h6,
                 color = MaterialTheme.colors.surface,
                 modifier = Modifier.weight(2f, true)
             )
@@ -81,7 +77,6 @@ fun HeaderSection(
                     .clickable {
                     navController.navigate(Screen.FAVORITE.route) },
                 tint = MaterialTheme.colors.surface
-
             )
             Spacer(modifier = Modifier.width(20.dp))
             Icon(
@@ -124,7 +119,6 @@ fun HeaderSection(
                             imageVector = Icons.Default.Close ,
                             contentDescription = null)
                     }
-
                 }
             },
             shape = RoundedCornerShape(16.dp),

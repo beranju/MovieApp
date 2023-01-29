@@ -70,7 +70,7 @@ class MovieRepository @Inject constructor(
         }.flowOn(Dispatchers.IO)
     }
 
-    override fun getFavoritedNews(): Flow<BaseResult<List<DetailMovieModel>>>{
+    override fun getFavoriteNews(): Flow<BaseResult<List<DetailMovieModel>>>{
         return flow {
             movieDao.getAllNews()
                 .collect{listMovie->

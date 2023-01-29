@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -40,6 +41,9 @@ fun DetailScreen(
     val isFavorite = viewModel.isFavorite.collectAsState(initial = false).value
     val scope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
+    val context = LocalContext.current
+
+
     Scaffold(
         scaffoldState = scaffoldState
     ) {
@@ -47,7 +51,7 @@ fun DetailScreen(
             modifier = modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ){
-            viewModel.state.collectAsState(initial = UiState.Loading).value.let { uiState->
+            viewModel.state.collectAsState(initial = UiState.Loading).value.let { uiState ->
                 when(uiState){
                     is UiState.Loading -> {
                         viewModel.getDetailMovieById(movieId)
@@ -68,8 +72,10 @@ fun DetailScreen(
                                 }
                                 scope.launch{
                                     val result = scaffoldState.snackbarHostState.showSnackbar(
-                                        message = if (isFavorite) "Movie berhasil dihapus" else "Movie berhasil ditambahkan",
-                                        actionLabel = "Lihat",
+                                        message =
+                                        if (isFavorite) context.resources.getString(R.string.deletedMovie)
+                                        else context.resources.getString(R.string.addedMovie),
+                                        actionLabel = context.resources.getString(R.string.snackbar_label),
                                         duration = SnackbarDuration.Short
                                     )
                                     if(result == SnackbarResult.ActionPerformed){

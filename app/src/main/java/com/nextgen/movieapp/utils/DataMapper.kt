@@ -112,5 +112,4 @@ object DataMapper {
             voteCount = data.voteCount,
        )
     }
-
 }

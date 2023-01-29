@@ -51,5 +51,4 @@ fun NothingFoundPreview() {
     MovieAppTheme {
         NothingFound()
     }
-
 }

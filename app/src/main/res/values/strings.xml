@@ -11,4 +11,9 @@
     <string name="name">Beranju Sihombing</string>
     <string name="email">a319x0853@dicoding.org</string>
     <string name="back_button_cd">tombol kembali</string>
+    <string name="welcome_text">Welcome , Enjoy your movie</string>
+    <string name="deletedMovie">Movie berhasil dihapus</string>
+    <string name="addedMovie">Movie berhasil ditambahkan</string>
+    <string name="snackbar_label">Lihat</string>
+    <string name="favorite_screen_title">Your Favorite Movie</string>
 </resources>
