@@ -87,7 +87,9 @@ fun DetailScreen(
                         )
                     }
                     is UiState.Error -> {
-                        ErrorView(message = uiState.message, action = {})
+                        ErrorView(message = uiState.message, action = {
+                            navController.navigateUp()
+                        })
                     }
                 }
             }

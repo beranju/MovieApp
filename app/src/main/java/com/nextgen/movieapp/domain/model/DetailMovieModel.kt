@@ -5,7 +5,7 @@ data class DetailMovieModel(
     val video: Boolean,
     val title: String,
     val backdropPath: String,
-    val revenue: Int? = null,
+    val revenue: Long? = null,
     val genres: List<GenreItem>? = null,
     val popularity: Any,
     val id: Int,
